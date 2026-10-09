@@ -289,3 +289,254 @@ img { max-width: 100%; display: block; }
 /* ===== 滚动出现动效 ===== */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
 .reveal.in { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   iOS 液态玻璃按钮（复刻 iOS 原生质感：扫光 + 按压回弹 + 跟手光晕）
+   由 .btn 体系升级，JS 自动注入多层玻璃结构
+   ============================================================ */
+.btn {
+  --px: 50%;
+  --py: 36%;
+  --dur: .34s;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 590;
+  letter-spacing: .012em;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
+  transition: transform var(--dur) var(--ease);
+  will-change: transform;
+}
+.btn:active { transform: scale(.955); }
+.btn:focus { outline: none; }
+.btn:focus-visible { outline: 2px solid rgba(255,255,255,.85); outline-offset: 4px; }
+
+.btn__glass,
+.btn__refract,
+.btn__glow,
+.btn__shine,
+.btn__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* 1. 玻璃主体：背景模糊 + 半透明渐变 */
+.btn__glass {
+  z-index: 0;
+  overflow: hidden;
+  backdrop-filter: blur(16px) saturate(190%) brightness(1.05);
+  -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.05);
+  background:
+    radial-gradient(140% 140% at var(--px) var(--py),
+      rgba(255,255,255,.40) 0%,
+      rgba(255,255,255,.10) 26%,
+      rgba(255,255,255,.03) 52%,
+      rgba(255,255,255,.08) 100%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.10) 42%,
+      rgba(255,255,255,.04) 58%,
+      rgba(255,255,255,.14) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.70),
+    inset 0 -1px 0 rgba(255,255,255,.20),
+    inset 1px 0 0 rgba(255,255,255,.16),
+    inset -1px 0 0 rgba(255,255,255,.16),
+    0 1px 1px rgba(0,0,0,.10),
+    0 8px 20px -6px rgba(0,0,0,.40),
+    0 22px 48px -16px rgba(0,0,0,.50);
+  transition: backdrop-filter var(--dur) ease, -webkit-backdrop-filter var(--dur) ease, box-shadow var(--dur) ease;
+}
+
+/* primary 青蓝玻璃 tint */
+.btn-primary .btn__glass {
+  background:
+    radial-gradient(140% 140% at var(--px) var(--py),
+      rgba(255,255,255,.46) 0%,
+      rgba(110,231,255,.32) 26%,
+      rgba(0,212,200,.22) 52%,
+      rgba(0,212,200,.10) 100%),
+    linear-gradient(180deg,
+      rgba(110,231,255,.42) 0%,
+      rgba(0,212,200,.30) 42%,
+      rgba(0,170,165,.16) 58%,
+      rgba(110,231,255,.24) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.75),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 1px 0 0 rgba(255,255,255,.18),
+    inset -1px 0 0 rgba(255,255,255,.18),
+    0 1px 1px rgba(0,0,0,.10),
+    0 8px 22px -6px rgba(0,212,200,.45),
+    0 22px 48px -16px rgba(0,0,0,.50);
+}
+
+/* ghost 中性玻璃（稍暗，适配深色背景的次要按钮） */
+.btn-ghost .btn__glass {
+  background:
+    radial-gradient(140% 140% at var(--px) var(--py),
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.08) 26%,
+      rgba(255,255,255,.02) 52%,
+      rgba(255,255,255,.06) 100%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.06) 42%,
+      rgba(255,255,255,.02) 58%,
+      rgba(255,255,255,.08) 100%);
+}
+
+/* 2. 边缘折射环（厚边） */
+.btn__refract {
+  z-index: 1;
+  padding: 1.5px;
+  backdrop-filter: blur(.5px) saturate(200%) brightness(1.55) contrast(1.1);
+  -webkit-backdrop-filter: blur(.5px) saturate(200%) brightness(1.55) contrast(1.1);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: .95;
+}
+
+/* 3. 跟随光标的内发光 */
+.btn__glow {
+  z-index: 2;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.btn.is-hover .btn__glow,
+.btn.is-pressed .btn__glow { opacity: 1; }
+.btn__glow::before {
+  content: "";
+  position: absolute;
+  left: var(--px);
+  top: var(--py);
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(255,255,255,.55), rgba(255,255,255,0) 72%);
+  filter: blur(6px);
+}
+
+/* 4. 点击扫光 */
+.btn__shine { z-index: 3; overflow: hidden; }
+.btn__shine::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 52%;
+  background: linear-gradient(100deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.85) 50%,
+    rgba(255,255,255,0) 100%);
+  transform: translateX(-220%) skewX(-16deg);
+  filter: blur(3px);
+  opacity: 0;
+}
+.btn.is-shine .btn__shine::before {
+  animation: sweep .9s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes sweep {
+  0%   { opacity: 0; transform: translateX(-220%) skewX(-16deg); }
+  14%  { opacity: .95; }
+  100% { opacity: 0; transform: translateX(330%) skewX(-16deg); }
+}
+
+/* 5. 外侧高光描边 */
+.btn__rim {
+  z-index: 4;
+  padding: 1px;
+  background: linear-gradient(160deg,
+    rgba(255,255,255,.95) 0%,
+    rgba(255,255,255,.30) 22%,
+    rgba(255,255,255,.06) 48%,
+    rgba(255,255,255,.10) 72%,
+    rgba(255,255,255,.60) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: .9;
+}
+
+/* 6. 文字 */
+.btn__label {
+  position: relative;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+
+/* 悬停 / 按压状态 */
+@media (hover: hover) {
+  .btn:hover .btn__glass {
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.10);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.10);
+  }
+}
+.btn.is-pressed .btn__glass {
+  backdrop-filter: blur(20px) saturate(210%) brightness(1.18);
+  -webkit-backdrop-filter: blur(20px) saturate(210%) brightness(1.18);
+  background:
+    radial-gradient(150% 150% at var(--px) var(--py),
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.16) 30%,
+      rgba(255,255,255,.06) 60%,
+      rgba(255,255,255,.12) 100%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.34) 0%,
+      rgba(255,255,255,.12) 45%,
+      rgba(255,255,255,.06) 60%,
+      rgba(255,255,255,.16) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -1px 2px rgba(255,255,255,.22),
+    inset 0 8px 16px -10px rgba(0,0,0,.55),
+    0 1px 1px rgba(0,0,0,.12),
+    0 3px 10px -4px rgba(0,0,0,.45);
+}
+.btn-primary.is-pressed .btn__glass {
+  background:
+    radial-gradient(150% 150% at var(--px) var(--py),
+      rgba(255,255,255,.55) 0%,
+      rgba(110,231,255,.30) 30%,
+      rgba(0,212,200,.22) 60%,
+      rgba(0,212,200,.14) 100%),
+    linear-gradient(180deg,
+      rgba(110,231,255,.44) 0%,
+      rgba(0,212,200,.32) 45%,
+      rgba(0,170,165,.18) 60%,
+      rgba(110,231,255,.26) 100%);
+}
+
+/* 大号按钮 */
+.btn-lg { min-height: 58px; padding: 0 40px; font-size: 16px; }
+
+/* 无障碍：降低动态效果 */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn__glass, .btn__glow { transition-duration: .01ms; }
+  .btn.is-shine .btn__shine::before { animation: none; }
+}
