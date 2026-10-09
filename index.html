@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stellar Tech Studio · 展示区</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- 背景层：深黑→深灰渐变 + 底部青蓝丝绸光带波纹 -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-gradient"></div>
+    <svg class="silk silk-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path class="silk-path" d="M0,192 C240,288 480,96 720,160 C960,224 1200,128 1440,192 L1440,320 L0,320 Z"></path>
+    </svg>
+    <svg class="silk silk-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path class="silk-path" d="M0,224 C260,128 520,288 760,224 C1000,160 1240,256 1440,208 L1440,320 L0,320 Z"></path>
+    </svg>
+    <svg class="silk silk-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path class="silk-path" d="M0,256 C280,192 560,288 800,248 C1040,208 1280,272 1440,240 L1440,320 L0,320 Z"></path>
+    </svg>
+    <div class="grid-overlay"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
+
+  <!-- 顶部导航 -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span class="brand-name">Stellar Tech Studio</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active">展示区</a>
+        <a href="#">关于</a>
+        <a href="#">服务</a>
+        <a href="#">联系</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 展示区标题 -->
+    <section class="showcase-head">
+      <p class="eyebrow">SHOWCASE</p>
+      <h1 class="title">展示区</h1>
+      <p class="subtitle">深空科技风 · 玻璃拟态卡片 · 流动光带</p>
+    </section>
+
+    <!-- 展示卡片网格 -->
+    <section class="cards" id="cards">
+      <article class="card">
+        <div class="corner"></div>
+        <div class="card-tag">PROJECT 01</div>
+        <h2 class="card-title">星域臻旅</h2>
+        <p class="card-desc">跨境出行服务平台，客户端 / 司机端 / 后台端一体化。</p>
+        <div class="card-foot"><span class="chip">KMP</span><span class="chip">Compose</span></div>
+      </article>
+
+      <article class="card">
+        <div class="corner"></div>
+        <div class="card-tag">PROJECT 02</div>
+        <h2 class="card-title">秘联</h2>
+        <p class="card-desc">集团内部安全通讯与协作中枢，私有化部署。</p>
+        <div class="card-foot"><span class="chip">App</span><span class="chip">端到端加密</span></div>
+      </article>
+
+      <article class="card">
+        <div class="corner"></div>
+        <div class="card-tag">PROJECT 03</div>
+        <h2 class="card-title">炙巷食谱</h2>
+        <p class="card-desc">餐饮收银 / 下单 / 后厨打印全链路数字化方案。</p>
+        <div class="card-foot"><span class="chip">POS</span><span class="chip">Web</span></div>
+      </article>
+
+      <article class="card">
+        <div class="corner"></div>
+        <div class="card-tag">PROJECT 04</div>
+        <h2 class="card-title">中心枢纽</h2>
+        <p class="card-desc">集团财务核算、薪酬与经营分析一体化中台。</p>
+        <div class="card-foot"><span class="chip">Supabase</span><span class="chip">Edge</span></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
